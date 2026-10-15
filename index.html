@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CIC Group - Ingreso al Sistema</title>
+  <style>
+    :root {
+      --primary: #2563eb;
+      --bg-gradient: linear-gradient(135deg, #f472b6 0%, #60a5fa 100%);
+      --dark: #0f172a;
+    }
+    * { box-sizing: border-box; font-family: 'Segoe UI', Arial, sans-serif; }
+    body {
+      margin: 0; height: 100vh; display: flex; align-items: center; justify-content: center; background: var(--bg-gradient);
+    }
+    .login-card {
+      background: white; width: 100%; max-width: 380px; padding: 40px 30px 30px 30px; border-radius: 16px;
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1); position: relative; text-align: center;
+    }
+    .avatar-circle {
+      width: 80px; height: 80px; background-color: var(--dark); border-radius: 50%; display: flex;
+      align-items: center; justify-content: center; font-size: 36px; color: white; position: absolute;
+      top: -40px; left: calc(50% - 40px); box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    }
+    h2 { margin: 20px 0 25px 0; color: var(--dark); font-size: 22px; font-weight: 700; }
+    .input-group { margin-bottom: 20px; text-align: left; position: relative; }
+    .input-group label {
+      display: block; font-size: 11px; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; font-weight: 600;
+    }
+    .input-group input {
+      width: 100%; padding: 10px 12px 10px 34px; border: none; border-bottom: 2px solid #cbd5e1; font-size: 15px; color: #334155; outline: none;
+    }
+    .input-group input:focus { border-color: var(--primary); }
+    .input-icon { position: absolute; bottom: 10px; left: 10px; font-size: 16px; opacity: 0.5; }
+    .options-row { display: flex; justify-content: space-between; align-items: center; font-size: 13px; color: #64748b; margin-bottom: 25px; }
+    .options-row label { cursor: pointer; display: flex; align-items: center; gap: 5px; }
+    .options-row a { color: #64748b; text-decoration: none; }
+    .btn-login {
+      width: 100%; padding: 12px; background-color: var(--dark); color: white; border: none; border-radius: 6px;
+      font-size: 15px; font-weight: bold; cursor: pointer; text-transform: uppercase; letter-spacing: 0.5px;
+    }
+    .btn-login:hover { background-color: var(--primary); }
+    .error-msg { color: #ef4444; font-size: 13px; font-weight: bold; margin-top: 15px; display: none; }
+  </style>
+</head>
+<body>
+
+  <div class="login-card">
+    <div class="avatar-circle">👤</div>
+    <h2>CIC Group</h2>
+    
+    <form id="form-login" onsubmit="validarAcceso(event)">
+      <div class="input-group">
+        <label>Usuario / Email</label>
+        <span class="input-icon">✉</span>
+        <input type="text" id="login-user" placeholder="Escribí tu usuario" required autocomplete="off">
+      </div>
+      
+      <div class="input-group">
+        <label>Contraseña</label>
+        <span class="input-icon">🔒</span>
+        <input type="password" id="login-pass" placeholder="••••••••" required>
+      </div>
+
+      <div class="options-row">
+        <label><input type="checkbox"> Recordarme</label>
+        <a href="#">¿Olvidaste tu contraseña?</a>
+      </div>
+
+      <button type="submit" class="btn-login">Login</button>
+      
+      <div id="msg-error" class="error-msg">⚠ Usuario o contraseña incorrectos</div>
+    </form>
+  </div>
+
+  <script>
+    // Tu URL unificada de Firebase Realtime Database
+    const FIREBASE_DB = "https://mi-web000-default-rtdb.firebaseio.com";
+
+    async function validarAcceso(e) {
+      e.preventDefault();
+      
+      const u = document.getElementById('login-user').value.trim().toLowerCase();
+      const p = document.getElementById('login-pass').value;
+      const error = document.getElementById('msg-error');
+      
+      if(!u || !p) return;
+
+      // 1. CONTROL DE ACCESO PARA EL SUPERADMIN (DUEÑO)
+      if (u === "superadmin" && p === "Gabriel.2024") {
+        error.style.display = "none";
+        localStorage.setItem("sesion_rol", "superadmin");
+        localStorage.setItem("sesion_usuario", "Super Clave Maestra");
+        window.location.href = "panel.html"; // Lleva directo al panel de administración
+        return;
+      }
+
+      // 2. CONTROL DE ACCESO EN VIVO PARA OPERADORES DE FIREBASE
+      try {
+        const res = await fetch(`${FIREBASE_DB}/usuarios.json`);
+        const usuarios = await res.json();
+        
+        let accesoConcedido = false;
+        let nombreOperador = "";
+
+        if (usuarios) {
+          Object.keys(usuarios).forEach(id => {
+            const cuenta = usuarios[id];
+            if (cuenta.usuario.toLowerCase() === u && cuenta.password === p) {
+              accesoConcedido = true;
+              nombreOperador = cuenta.nombre || cuenta.usuario;
+            }
+          });
+        }
+
+        if (accesoConcedido) {
+          error.style.display = "none";
+          localStorage.setItem("sesion_rol", "operador");
+          localStorage.setItem("sesion_usuario", nombreOperador);
+          window.location.href = "panel.html"; // Redirecciona exitosamente al panel
+        } else {
+          error.style.display = "block"; // Muestra mensaje de error si fallan las credenciales
+        }
+      } catch (err) {
+        console.error("Error en la conexión de red con Firebase:", err);
+        alert("Error de conexión. Asegúrate de tener acceso a internet para validar las cuentas.");
+      }
+    }
+  </script>
+
+</body>
+</html>
