@@ -1,0 +1,203 @@
+/* --- VARIABLES DE COLOR (DISEÑO AZUL) --- */
+:root {
+  --bg-sidebar: #0f172a;       /* Azul marino oscuro profundo */
+  --bg-active: #1e3a8a;        /* Azul corporativo activo */
+  --primary: #2563eb;          /* Azul brillante para elementos destacados */
+  --success: #10b981;          /* Verde para pagos y estados activos */
+  --danger: #ef4444;           /* Rojo para deudas y anulaciones */
+  --bg-main: #f0f4f8;          /* Fondo general azul acero claro */
+  --bg-table-header: #dbeafe;  /* Encabezados de tablas en azul suave */
+  --color-text-header: #1e40af;/* Texto de encabezados */
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body { 
+  font-family: 'Segoe UI', Arial, sans-serif; 
+  margin: 0; 
+  display: flex; 
+  height: 100vh; 
+  background-color: var(--bg-main); 
+  overflow: hidden;
+}
+
+/* --- MENÚ LATERAL (SIDEBAR) --- */
+.sidebar {
+  width: 260px;
+  background-color: var(--bg-sidebar);
+  color: white;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 20px 0;
+}
+.sidebar-brand {
+  font-size: 22px;
+  font-weight: bold;
+  padding: 0 24px 20px 24px;
+  border-bottom: 1px solid #1e293b;
+  color: #f8fafc;
+}
+.sidebar-menu {
+  list-style: none;
+  padding: 0;
+  margin: 20px 0;
+  flex-grow: 1;
+}
+.sidebar-menu li a {
+  display: block;
+  padding: 14px 24px;
+  color: #94a3b8;
+  text-decoration: none;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.sidebar-menu li a:hover, .sidebar-menu li.active a {
+  background-color: var(--bg-active);
+  color: white;
+  border-left: 4px solid var(--primary);
+}
+
+/* --- CONTENEDOR PRINCIPAL --- */
+.main-content {
+  flex: 1;
+  padding: 30px;
+  overflow-y: auto;
+}
+.seccion {
+  display: none;
+}
+.seccion.active {
+  display: block;
+}
+
+/* --- CONTENEDORES Y TARJETAS --- */
+.table-container {
+  background: white;
+  border-radius: 12px;
+  padding: 15px;
+  box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+  margin-top: 20px;
+}
+table { 
+  width: 100%; 
+  border-collapse: separate; 
+  border-spacing: 0;
+}
+th, td { 
+  padding: 14px 16px; 
+  text-align: left; 
+}
+th { 
+  background-color: var(--bg-table-header); 
+  color: var(--color-text-header); 
+  font-weight: bold; 
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border-bottom: 2px solid #e2e8f0;
+}
+td {
+  border-bottom: 1px solid #f1f5f9;
+}
+.fila-cliente:hover {
+  background-color: #f8fafc;
+}
+
+/* --- GRILLES DE MESES (12 MESES) --- */
+.grid-meses { 
+  display: grid; 
+  grid-template-columns: repeat(4, 1fr); 
+  gap: 12px; 
+  margin-top: 15px; 
+}
+@media (max-width: 900px) {
+  .grid-meses { grid-template-columns: repeat(2, 1fr); }
+}
+.mes-box {
+  padding: 12px;
+  border-radius: 8px;
+  text-align: center;
+  font-size: 13px;
+  font-weight: bold;
+  border: 1px solid transparent;
+}
+.mes-pago { background-color: #d1fae5; color: #065f46; border-color: #a7f3d0; }
+.mes-deuda { background-color: #fee2e2; color: #991b1b; border-color: #fca5a5; }
+
+/* --- INDICADORES KPI --- */
+.dashboard-cards {
+  display: flex;
+  gap: 20px;
+  margin-bottom: 25px;
+}
+.card-kpi {
+  flex: 1;
+  background: white;
+  padding: 16px 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-left: 5px solid var(--primary);
+}
+.card-kpi.success { border-left-color: var(--success); }
+.card-kpi.danger { border-left-color: var(--danger); }
+.card-kpi h5 { margin: 0; color: #64748b; font-size: 11px; text-transform: uppercase; }
+.card-kpi p { margin: 5px 0 0 0; font-size: 22px; font-weight: bold; }
+
+/* --- BOTONES Y COMPONENTES --- */
+.btn {
+  padding: 10px 16px;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
+  border: none;
+  font-size: 14px;
+}
+.btn-green { background-color: var(--success); color: white; }
+.btn-blue { background-color: var(--primary); color: white; }
+.btn-gray { background-color: #94a3b8; color: white; }
+
+/* --- MODALES --- */
+.modal {
+  display: none;
+  position: fixed;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background: rgba(15, 23, 42, 0.6);
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+.modal.open { display: flex; }
+.modal-content {
+  background: white;
+  padding: 25px;
+  border-radius: 12px;
+  width: 100%;
+  max-width: 450px;
+  position: relative;
+}
+.close-modal {
+  position: absolute;
+  top: 15px; right: 15px;
+  font-size: 22px; background: none; border: none; cursor: pointer;
+}
+.form-group {
+  margin-bottom: 15px;
+}
+.form-group label {
+  display: block; margin-bottom: 6px; font-weight: bold; font-size: 13px; color: #475569;
+}
+.form-group input, .form-group select {
+  width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 14px;
+}
+.badge {
+  padding: 6px 12px; border-radius: 50px; font-size: 12px; font-weight: bold; display: inline-block;
+}
+.badge-activo { background-color: #d1fae5; color: #065f46; }
+.badge-deuda { background-color: #fee2e2; color: #991b1b; }
